@@ -15,7 +15,7 @@ let mydb, cloudant;
 var vendor; // Because the MongoDB and Cloudant use different API commands, we
             // have to check which command should be used based on the database
             // vendor.
-var dbName = 'mydb';
+var dbName = 'hackday_db';
 
 // Separate functions are provided for inserting/retrieving content from
 // MongoDB and Cloudant databases. These functions must be prefixed by a
@@ -24,6 +24,7 @@ var dbName = 'mydb';
 
 var insertOne = {};
 var getAll = {};
+
 
 insertOne.cloudant = function(doc, response) {
   mydb.insert(doc, function(err, body, header) {
@@ -77,6 +78,9 @@ getAll.mongodb = function(response) {
   });
 }
 
+
+
+
 /* Endpoint to greet and add a new visitor to database.
 * Send a POST request to localhost:3000/api/visitors with body
 * {
@@ -117,7 +121,7 @@ app.get("/api/visitors", function (request, response) {
 // load local VCAP configuration  and service credentials
 var vcapLocal;
 try {
-  //vcapLocal = require('./vcap-local.json');
+//  vcapLocal = require('./vcap-local.json');
   vcapLocal = JSON.parse(fs.readFileSync('/app/vcap-local.json', 'utf8'));
   //import vcapLocal from ('./vcap-local.json')
   console.log("Loaded local VCAP", vcapLocal);
@@ -133,7 +137,7 @@ if (appEnv.services['compose-for-mongodb'] || appEnv.getService(/.*[Mm][Oo][Nn][
   // Load the MongoDB library.
   var MongoClient = require('mongodb').MongoClient;
 
-  dbName = 'mydb';
+  dbName = 'hackday_db';
 
   // Initialize database with credentials
   if (appEnv.services['compose-for-mongodb']) {
@@ -181,7 +185,7 @@ if (appEnv.services['compose-for-mongodb'] || appEnv.getService(/.*[Mm][Oo][Nn][
 }
 if(cloudant) {
   //database name
-  dbName = 'mydb';
+  dbName = 'hackday_db';
 
   // Create a new "mydb" database.
   cloudant.db.create(dbName, function(err, data) {
@@ -195,8 +199,76 @@ if(cloudant) {
   vendor = 'cloudant';
 }
 
+const url = require("url");
+var express = require("express")
+var app = express();
+
+app.engine('.html', require('ejs').__express);
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+
+app.use(express.static(__dirname + '/public'));
+app.post('/api/gdata', function(req, res) {
+
+var dataJson;
+try {
+   data = JSON.parse(fs.readFileSync('data.json', 'utf8'));
+   var tempObj = {};
+   var tempObj2 = {};
+   for(var i = 0; i < data.length; i++){
+	   var d = data[i];
+	   
+	   var dtArr = d.toString().split(" ");
+	   var day = dtArr[0];
+	   var dObj = new Date(day);
+	   var month = dObj.getMonth() + 1;
+	   var day = dObj.getDate();
+	   var type = d[1]
+	   if(tempObj[type]){
+		   tempObj[type] += 1;
+	   }else{
+		   tempObj[type] = 1; 
+	   }
+	   if(tempObj2[month]){
+		   if(month){
+			   if(tempObj2[month][day]){
+				   tempObj2[month][day] += 1; 
+			   }else{
+				   tempObj2[month][day] = 1;
+			   }
+		   }
+	   }else{
+		   if(month){
+			   tempObj2[month] = {};
+			   if(tempObj2[month][day]){
+				   tempObj2[month][day] += 1; 
+			   }else{
+				   tempObj2[month][day] = 1;
+			   }
+		   }
+		   
+	   }
+	}
+   dataJson = {"lineData" : tempObj2, "barData" : tempObj}
+   res.send(dataJson);
+  return ;
+//   console.log("Loaded local VCAP", dataJson);
+} catch (e) {
+	 res.send([]);
+   return ;
+}
+
+});
+app.get('/', function(req, res) {
+    res.render('demo', {
+        title: "EJS example",
+        header: "Some users",
+//        data: JSON.stringify(dataJson)
+    });
+});
+
 //serve static file (index.html, images, css)
-app.use(express.static(__dirname + '/views'));
+//app.use(express.static(__dirname + '/views'));
 
 
 

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+   <head>
+       <meta charset="utf-8">
+            <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+       <script type="text/javascript" src="js/echart/echarts.min.js"></script>
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div class="container" style="display:flex;flex-direction: column;height: 100%;">
+       		<div class="item"  style="display:flex;flex-direction: column;height:50%;    align-items: center;">
+<div class="form-group" style="display:flex; align-items: center;">
+
+                                    <label style="padding-right: 10px;white-space: nowrap;">Show By Month:</label>
+                                    <select class="form-control" id="cate-1">
+                                        <option name="complexity_default" value ="0"> </option>
+
+                                    </select>
+                                </div>
+                           <div id="container1" style="flex:1;width: 100%; border-top: #eee 1px solid;"></div>     
+                                
+       		</div>
+       		<div class="item" style="display:flex;flex-direction: column;height:50%; border-top: #eee 1px solid;">
+       			<h4 style="margin: 20px 0px 0px 0px;text-align: center;text-align: center;">All Errors</h4>
+       			<div id="container" style="width: 100%;flex:1;padding: 0px 30px;"></div>
+       		</div>
+       </div>
+       
+       <div class="modal fade" id="loadingModal">
+	<div style="width: 200px;height:20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%;margin-left:-100px;margin-top:-10px">
+		<div class="progress progress-striped active" style="margin-bottom: 0;">
+			<div class="progress-bar" style="width: 100%;"></div>
+		</div>
+		<h5>loading...</h5>
+	</div>
+</div>
+   
+       <script type="text/javascript">
+       var lineData = null;
+       var dom = document.getElementById("container1");
+	   var myChart2 = echarts.init(dom);
+	   var monthOrder = {1: "January",2:"February",3:"March",4:"April",5:"May",6:"June",7:"July",8:"August",9:"Septemper",10:"October",11:"November",12:"December"};
+	   var smd = [];
+	   var sm = "";
+	   function createOpt(data){
+		  
+   		
+	    	   var months =  Object.keys(data);
+	    	   var domHtml = "";
+	    	   var now = new Date();
+	    	   var nm = (now.getMonth()+1);
+	    	   for(var i=0; i < months.length;i++){
+	    		   var m = months[i];
+	    		   if(m == nm){
+	    			   smd = data[m];
+	    			   sm = m;
+	    			   domHtml += "<option value='"+m+"' selected>"+monthOrder[m]+"</option>";
+	    		   }else{
+	    			   smd = [];
+	    			   domHtml += "<option value='"+m+"'>"+monthOrder[m]+"</option>";
+	    		   }
+	    		  
+	    	   }
+	    	   $("#cate-1").html("");
+	    		$("#cate-1").append(domHtml);
+	    		linechart(data,sm);
+	   }
+       function linechart(data,gm){
+    	   smd = data[gm];
+    	   sm = gm;
+    	   
+    		
+    		if(sm != ""){
+    			option = {
+        			    xAxis: {
+        			        type: 'category',
+        			        data: []
+        			    },
+        			    yAxis: {
+        			        type: 'value'
+        			    },
+        			    series: [{
+        			        data: [],
+        			        type: 'line'
+        			    }]
+        			};
+        		
+    			 for(var day in smd){
+    				 option.xAxis.data.push(sm+"/"+day);
+    				 option.series[0].data.push(smd[day]);
+    				 
+    			 }
+        		  
+        		 if (option && typeof option === "object") {
+        			 myChart2.setOption(option, true);
+         		}
+            
+        		
+    		}
+    		
+    		
+    	   }
+       function barchart(data){
+    	   
+    	   
+    	   var dom = document.getElementById("container");
+    	   var myChart = echarts.init(dom);
+    	   var app = {};
+    	   option = null;
+    	   var dataAxis = Object.keys(data);
+    	   var data = Object.values(data);
+    	   var yMax = 500;
+    	   var dataShadow = [];
+
+    	   for (var i = 0; i < data.length; i++) {
+    	       dataShadow.push(yMax);
+    	   }
+
+
+    	   option = {
+    	       tooltip : {
+    	           trigger: 'axis',
+    	           axisPointer : {         
+    	               type : 'shadow'   
+    	           }
+    	       },
+    	       grid: {
+    	           left: '3%',
+    	           right: '4%',
+    	           bottom: '3%',
+    	           containLabel: true
+    	       },
+    	       xAxis : [
+    	           {
+    	               type : 'category',
+    	               data : dataAxis,
+    	               axisTick: {
+    	                   alignWithLabel: true
+    	               }
+    	           }
+    	       ],
+    	       yAxis : [
+    	           {
+    	               type : 'value'
+    	           }
+    	       ],
+    	       series : [
+    	           {
+    	               type:'bar',
+    	               barWidth: '60%',
+    	               data:data	
+    	           }
+    	       ]
+    	   };
+
+    	   if (option && typeof option === "object") {
+    		    myChart.setOption(option, true);
+    		}
+       }
+       (function ($) {
+
+    	   $("#loadingModal").modal('show');
+
+    	   $.ajax({
+    			  type: 'POST',
+    			  url: "/api/gdata",
+    			  success: function(res){
+    				  barchart(res.barData);
+    				  lineData = res.lineData;
+    				  createOpt(res.lineData);
+
+    				  $("#loadingModal").modal('hide');
+    			  },
+    			  dataType: "json"
+    		});
+    	   
+    	   
+    	   $("#cate-1").change(function(obj){
+    	    	var m = $(obj.currentTarget).val();
+    	    	linechart(lineData,m);
+    	    });
+
+       })(jQuery);
+
+
+// Enable data zoom when user click bar.
+/* var zoomSize = 6;
+myChart.on('click', function (params) {
+    console.log(dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)]);
+    myChart.dispatchAction({
+        type: 'dataZoom',
+        startValue: dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)],
+        endValue: dataAxis[Math.min(params.dataIndex + zoomSize / 2, data.length - 1)]
+    });
+});;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+} */
+       </script>
+   </body>
+</html>
