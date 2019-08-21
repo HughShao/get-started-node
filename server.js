@@ -85,13 +85,7 @@ var getAll = {};
 //}
 //
 //});
-app.get('/', function(req, res) {
-    res.render('demo', {
-        title: "EJS example",
-        header: "Some users",
-//        data: JSON.stringify(dataJson)
-    });
-});
+
 
 
 insertOne.cloudant = function(doc, response) {
@@ -121,12 +115,12 @@ getAll.cloudant = function(response) {
     	   for(var i = 0; i < data.length; i++){
     		   var d = data[i];
     		   
-    		   var dtArr = d.date.toString().split(" ");
+    		   var dtArr = d.doc.date.toString().split(" ");
     		   var day = dtArr[0];
     		   var dObj = new Date(day);
     		   var month = dObj.getMonth() + 1;
     		   var day = dObj.getDate();
-    		   var type = d.services
+    		   var type = d.doc.services
     		   if(tempObj[type]){
     			   tempObj[type] += 1;
     		   }else{
@@ -188,7 +182,13 @@ getAll.mongodb = function(response) {
 
 
 
-
+app.get('/', function(req, res) {
+    res.render('demo', {
+        title: "EJS example",
+        header: "Some users",
+//        data: JSON.stringify(dataJson)
+    });
+});
 /* Endpoint to greet and add a new visitor to database.
 * Send a POST request to localhost:3000/api/visitors with body
 * {
