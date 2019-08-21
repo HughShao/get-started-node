@@ -114,7 +114,7 @@ getAll.cloudant = function(response) {
 //    	   var tempObj2 = {};
 //    	   for(var i = 0; i < data.length; i++){
 //    		   var d = data[i];
-//    		   
+//    		   if(d.doc && d.doc.date){  	
 //    		   var dtArr = d.doc.date.toString().split(" ");
 //    		   var day = dtArr[0];
 //    		   var dObj = new Date(day);
@@ -145,6 +145,7 @@ getAll.cloudant = function(response) {
 //    			   }
 //    			   
 //    		   }
+//    }
 //    		}
 //    	   dataJson = {"lineData" : tempObj2, "barData" : tempObj}
     	
