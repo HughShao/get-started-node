@@ -45,7 +45,7 @@ getAll.cloudant = function(response) {
         if(row.doc.name)
           names.push(row.doc.name);
       });*/
-      response.json(body.rows);
+      response.json(JSON.stringify(body.rows));
     }
   });
   //return names;
