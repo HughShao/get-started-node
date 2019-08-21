@@ -34,7 +34,6 @@
 		<div class="progress progress-striped active" style="margin-bottom: 0;">
 			<div class="progress-bar" style="width: 100%;"></div>
 		</div>
-		<h5>loading...</h5>
 	</div>
 </div>
    
@@ -162,11 +161,15 @@
        }
        (function ($) {
 
-    	   $("#loadingModal").modal('show');
-
+    	  /*  $("#loadingModal").modal('show');
+           $.get("./api/visitors")
+           .done(function(data) {
+        	   	 console.log(data);
+           }); */
+           
     	   $.ajax({
     			  type: 'POST',
-    			  url: "/api/gdata",
+    			  url: "api/gdata",
     			  success: function(res){
     				  barchart(res.barData);
     				  lineData = res.lineData;
