@@ -41,11 +41,11 @@ getAll.cloudant = function(response) {
   var names = [];  
   mydb.list({ include_docs: true }, function(err, body) {
     if (!err) {
-      body.rows.forEach(function(row) {
+      /*body.rows.forEach(function(row) {
         if(row.doc.name)
           names.push(row.doc.name);
-      });
-      response.json(names);
+      });*/
+      response.json(body.rows);
     }
   });
   //return names;
