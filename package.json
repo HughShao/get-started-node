@@ -19,8 +19,10 @@
     "body-parser": "^1.17.x",
     "cfenv": "^1.0.x",
     "dotenv": "^4.0.0",
+    "ejs": "^2.6.2",
     "express": "^4.15.x",
-    "mongodb": "^3.0.10"
+    "mongodb": "^3.0.10",
+    "url": "^0.11.0"
   },
   "author": "IBM Corp",
   "license": "Apache-2.0"

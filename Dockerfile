@@ -1,5 +1,5 @@
 FROM node:6-alpine
-
+ADD public /app/public
 ADD views /app/views
 ADD package.json /app
 ADD server.js /app/server.js
