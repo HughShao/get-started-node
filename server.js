@@ -109,46 +109,46 @@ getAll.cloudant = function(response) {
           names.push(row.doc.name);
       });*/
 
-    	var data = body.rows;
-    	var tempObj = {};
-    	   var tempObj2 = {};
-    	   for(var i = 0; i < data.length; i++){
-    		   var d = data[i];
-    		   
-    		   var dtArr = d.doc.date.toString().split(" ");
-    		   var day = dtArr[0];
-    		   var dObj = new Date(day);
-    		   var month = dObj.getMonth() + 1;
-    		   var day = dObj.getDate();
-    		   var type = d.doc.services
-    		   if(tempObj[type]){
-    			   tempObj[type] += 1;
-    		   }else{
-    			   tempObj[type] = 1; 
-    		   }
-    		   if(tempObj2[month]){
-    			   if(month){
-    				   if(tempObj2[month][day]){
-    					   tempObj2[month][day] += 1; 
-    				   }else{
-    					   tempObj2[month][day] = 1;
-    				   }
-    			   }
-    		   }else{
-    			   if(month){
-    				   tempObj2[month] = {};
-    				   if(tempObj2[month][day]){
-    					   tempObj2[month][day] += 1; 
-    				   }else{
-    					   tempObj2[month][day] = 1;
-    				   }
-    			   }
-    			   
-    		   }
-    		}
-    	   dataJson = {"lineData" : tempObj2, "barData" : tempObj}
+//    	var data = body.rows;
+//    	var tempObj = {};
+//    	   var tempObj2 = {};
+//    	   for(var i = 0; i < data.length; i++){
+//    		   var d = data[i];
+//    		   
+//    		   var dtArr = d.doc.date.toString().split(" ");
+//    		   var day = dtArr[0];
+//    		   var dObj = new Date(day);
+//    		   var month = dObj.getMonth() + 1;
+//    		   var day = dObj.getDate();
+//    		   var type = d.services
+//    		   if(tempObj[type]){
+//    			   tempObj[type] += 1;
+//    		   }else{
+//    			   tempObj[type] = 1; 
+//    		   }
+//    		   if(tempObj2[month]){
+//    			   if(month){
+//    				   if(tempObj2[month][day]){
+//    					   tempObj2[month][day] += 1; 
+//    				   }else{
+//    					   tempObj2[month][day] = 1;
+//    				   }
+//    			   }
+//    		   }else{
+//    			   if(month){
+//    				   tempObj2[month] = {};
+//    				   if(tempObj2[month][day]){
+//    					   tempObj2[month][day] += 1; 
+//    				   }else{
+//    					   tempObj2[month][day] = 1;
+//    				   }
+//    			   }
+//    			   
+//    		   }
+//    		}
+//    	   dataJson = {"lineData" : tempObj2, "barData" : tempObj}
     	
-      response.json(dataJson);
+      response.json(body.rows);
     }
   });
   //return names;
